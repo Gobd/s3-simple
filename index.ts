@@ -37,40 +37,55 @@ export interface S3File {
   contentType?: string;
 }
 
+export interface S3ClientOpts {
+  accessKeyId: string;
+  secretAccessKey: string;
+  sessionToken?: string; // optional
+  apiURL?: string; // defaults to 'https://s3.amazonaws.com'
+  retries?: number; // max of 5, min of 0 to disable
+}
+
 export class S3Client {
   private accessKeyId: string;
   private secretAccessKey: string;
   private sessionToken: string;
   private apiURL: string;
+  private retries: number;
   private retryableStatusCodes = new Set([
     400, 403, 408, 429, 500, 502, 503, 504, 509,
   ]);
 
-  constructor(
-    accessKeyId: string,
-    secretAccessKey: string,
-    sessionToken: string,
-    apiURL?: string,
-  ) {
-    const cleanedAccessKeyId = accessKeyId?.trim();
-    const cleanedSecretAccessKey = secretAccessKey?.trim();
-    const cleanedSessionToken = sessionToken?.trim();
+  constructor(opts: S3ClientOpts) {
+    const cleanedAccessKeyId = opts.accessKeyId?.trim();
+    const cleanedSecretAccessKey = opts.secretAccessKey?.trim();
+    const cleanedSessionToken = opts?.sessionToken?.trim();
 
+    const errors = [];
     if (cleanedAccessKeyId === '') {
-      throw new Error('accessKeyId cannot be empty');
+      errors.push('accessKeyId cannot be empty');
     }
 
     if (cleanedSecretAccessKey === '') {
-      throw new Error('secretAccessKey cannot be empty');
+      errors.push('secretAccessKey cannot be empty');
     }
 
-    if (apiURL?.trim()) {
-      this.apiURL = new URL(apiURL?.trim())?.hostname;
+    if (opts?.apiURL?.trim()) {
+      this.apiURL = new URL(opts?.apiURL?.trim())?.hostname;
       if (!this.apiURL) {
-        throw new Error('Invalid API URL');
+        errors.push('invalid apiURL');
       }
     } else {
       this.apiURL = 's3.amazonaws.com';
+    }
+
+    if (errors.length) {
+      throw new Error(errors.join(', '));
+    }
+
+    if (!opts?.retries || opts?.retries < 0) {
+      this.retries = 0;
+    } else if (opts?.retries > 5) {
+      this.retries = 5;
     }
 
     this.accessKeyId = cleanedAccessKeyId;
@@ -195,11 +210,12 @@ ${tokenHeader}
       opts.body = file?.content;
     }
 
-    console.log(reqURL, opts);
-
     const resp = await fetch(reqURL, opts);
 
-    if (!resp || (this.retryableStatusCodes.has(resp.status) && attempt < 3)) {
+    if (
+      !resp ||
+      (this.retryableStatusCodes.has(resp.status) && attempt < this.retries)
+    ) {
       const newAttempt = attempt + 1;
       return this.do(
         bucket,
