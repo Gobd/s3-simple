@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "listFiles": false,
+    "declaration": true,
+    "moduleDetection": "force",
+    "outDir": "dist",
+    "rootDir": ".",
+    "sourceMap": false,
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "types": ["@types/node"],
+    "baseUrl": "./",
+    "skipLibCheck": true
+  },
+  "exclude": [".vscode", "node_modules", "dist", "test.js"]
+}
