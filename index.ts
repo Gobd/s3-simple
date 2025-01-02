@@ -3,6 +3,7 @@ import { normalize as normalizePath } from 'node:path';
 import { parse as xmlParse, simplify as xmlSimplify } from 'txml';
 
 // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTAuthentication.html
+// https://github.com/paulhammond/s3simple/blob/main/s3simple
 
 enum Method {
   Get = 'GET',
@@ -14,6 +15,7 @@ interface SignRequest {
   method: Method;
   bucket: string;
   key: string;
+  extraHeaders?: Record<string, string>;
   // If PUT request
   file?: S3File;
 }
@@ -118,15 +120,28 @@ export class S3Client {
     }
 
     const date = `${new Date().toISOString().replaceAll('-', '').replaceAll(':', '').slice(0, 15)}Z`;
-    const tokenHeader = this?.sessionToken
-      ? `x-amz-security-token:${this.sessionToken}`
-      : '';
+    const headersObj = {};
+
+    if (this?.sessionToken) {
+      headersObj['x-amz-security-token'] = this.sessionToken;
+    }
+
+    for (const [key, value] of Object.entries(req?.extraHeaders || {})) {
+      headersObj[key.toLowerCase()] = value;
+    }
+
+    const headersToSign =
+      Object.keys(headersObj)
+        .sort()
+        .map((key) => {
+          return `${key}:${headersObj[key]}`;
+        }) || [];
 
     const stringToSign = `${req.method}
 ${fileMD5}
 ${req?.file?.contentType || ''}
 ${date}
-${tokenHeader}
+${headersToSign.join('\n')}
 /${req.bucket}/${req.key}`;
 
     const hmac = createHmac('sha1', this.secretAccessKey);
@@ -196,6 +211,7 @@ ${tokenHeader}
       bucket,
       key,
       file,
+      extraHeaders: headers,
     });
 
     const opts: RequestInit = {
