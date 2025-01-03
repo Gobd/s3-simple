@@ -20,3 +20,23 @@ console.log(await s3.get('bucket', '/asd/asd/zzzz asd zzz.js')); // Will error b
 ```
 
 Pass in credentials however you like. You might be able to get the ENV vars and pass those in or you might need to use fromNodeProviderChain like in this example.
+
+## Building
+
+Wil output to a top-level dist folder.
+
+```shell
+npm install
+./build/build.sh
+```
+
+## Testing
+
+```shell
+npm install
+npm run test
+# Or for coverage
+npm run coverage
+```
+
+There are also a recommended VSCode extensions that will help run tests and show coverage in the editor.

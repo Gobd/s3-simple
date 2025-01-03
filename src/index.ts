@@ -5,14 +5,8 @@ import { parse as xmlParse, simplify as xmlSimplify } from 'txml/txml';
 // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTAuthentication.html
 // https://github.com/paulhammond/s3simple/blob/main/s3simple
 
-enum Method {
-  Get = 'GET',
-  Put = 'PUT',
-  Delete = 'DELETE',
-}
-
 interface SignRequest {
-  method: Method;
+  method: 'GET' | 'PUT' | 'DELETE';
   bucket: string;
   key: string;
   extraHeaders: Record<string, string>;
@@ -94,7 +88,7 @@ export class S3Client {
     this.sessionToken = cleanedSessionToken;
   }
 
-  private cleanPath(inputPath: string, key: string): string {
+  public cleanPath(inputPath: string, key: string): string {
     const cleanedInputPath = normalizePath(inputPath.trim()).replace(
       /^\/|\/$/g,
       '',
@@ -105,7 +99,11 @@ export class S3Client {
     return cleanedInputPath;
   }
 
-  private sign(req: SignRequest): SignResponse {
+  public date(): Date {
+    return new Date();
+  }
+
+  public sign(req: SignRequest): SignResponse {
     req.bucket = this.cleanPath(req.bucket, 'bucket');
     req.key = this.cleanPath(req.key, 'key');
     req.key = encodeURIComponent(req.key);
@@ -118,7 +116,7 @@ export class S3Client {
       fileMD5 = md5.read().toString('base64');
     }
 
-    const date = `${new Date().toISOString().replaceAll('-', '').replaceAll(':', '').slice(0, 15)}Z`;
+    const date = `${this.date().toISOString().replaceAll('-', '').replaceAll(':', '').slice(0, 15)}Z`;
     const headersObj: Record<string, string> = {};
 
     if (this?.sessionToken) {
@@ -176,7 +174,7 @@ ${headersToSign.join('\n')}
     key: string,
     headers?: Record<string, string>,
   ): Promise<S3Response | string> {
-    return this.do(bucket, key, Method.Get, 200, null, 0, headers || {});
+    return this.do(bucket, key, 'GET', 200, null, 0, headers || {});
   }
 
   public async put(
@@ -185,7 +183,7 @@ ${headersToSign.join('\n')}
     file: S3File,
     headers?: Record<string, string>,
   ): Promise<S3Response | string> {
-    return this.do(bucket, key, Method.Put, 200, file, 0, headers || {});
+    return this.do(bucket, key, 'PUT', 200, file, 0, headers || {});
   }
 
   public async delete(
@@ -193,13 +191,13 @@ ${headersToSign.join('\n')}
     key: string,
     headers?: Record<string, string>,
   ): Promise<S3Response | string> {
-    return this.do(bucket, key, Method.Delete, 204, null, 0, headers || {});
+    return this.do(bucket, key, 'DELETE', 204, null, 0, headers || {});
   }
 
   private async do(
     bucket: string,
     key: string,
-    method: Method,
+    method: 'GET' | 'PUT' | 'DELETE',
     desiredStatus: number,
     file: S3File | null,
     attempt: number,
@@ -277,7 +275,7 @@ ${headersToSign.join('\n')}
       return Promise.reject(r);
     }
 
-    if (method === Method.Get) {
+    if (method === 'GET') {
       return Promise.resolve(respText);
     }
 

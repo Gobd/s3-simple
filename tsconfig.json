@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "removeComments": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "listFiles": false,
@@ -9,7 +11,7 @@
     "inlineSourceMap": false,
     "moduleDetection": "force",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "sourceMap": false,
     "target": "ESNext",
     "lib": ["ESNext"],
@@ -17,5 +19,5 @@
     "baseUrl": "./",
     "skipLibCheck": true
   },
-  "exclude": [".vscode", "node_modules", "dist", "test.js"]
+  "exclude": [".vscode", "node_modules", "dist", "tests"]
 }
