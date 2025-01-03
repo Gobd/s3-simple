@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "removeComments": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "listFiles": false,

@@ -14,12 +14,13 @@
   },
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "bun test",
+    "test": "node --experimental-strip-types --test ./tests/**/*_test.ts",
+    "updatesnaps": "node --experimental-strip-types --test-update-snapshots --test ./tests/**/*_test.ts",
     "lint": "npx @biomejs/biome check",
     "lint-fix": "npx @biomejs/biome check --write",
     "postinstall": "node ./txmlType.js",
-    "ts-check": "node ./txmlType.js && npx tsc --noEmit -p .",
-    "build": "npx tsc -p tsconfig.json"
+    "ts-check": "node ./txmlType.js && npx tsc -p tsconfig.json",
+    "build": "npx tsc -p tsconfig.build.json"
   },
   "author": "Brian Kemper",
   "license": "ISC",
