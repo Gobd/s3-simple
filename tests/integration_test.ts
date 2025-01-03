@@ -3,21 +3,21 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { S3Client } from '../src/index.ts';
 import type { S3Response } from '../src/index.ts';
 
-const { accessKeyId, secretAccessKey, sessionToken } =
-  await fromNodeProviderChain()();
-
-const s3 = new S3Client({
-  accessKeyId,
-  secretAccessKey,
-  sessionToken,
-});
-
 suite('s3-simple integration', () => {
   test('should work with S3', async (t) => {
     if (!process.env.INTEGRATION) {
       t.skip('Integration tests are disabled');
       return;
     }
+
+    const { accessKeyId, secretAccessKey, sessionToken } =
+      await fromNodeProviderChain()();
+
+    const s3 = new S3Client({
+      accessKeyId,
+      secretAccessKey,
+      sessionToken,
+    });
 
     const deleteResp = await s3.delete(
       'la-profefe',
