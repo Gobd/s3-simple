@@ -136,35 +136,29 @@ function createServerPromise(
   return new Promise((resolve, reject) => {
     let respIndex = 0;
     const server = createServer((req, res) => {
+      let body = '';
       if (req.method === 'PUT') {
-        const body = [];
-
-        req.on('data', (chunk) => {
-          body.push(chunk);
+        req.on('data', (chunk: Buffer) => {
+          body += chunk.toString();
         });
-
         req.on('end', () => {
-          const bodyString = Buffer.concat(body).toString();
-
           f({
             req,
-            body: bodyString,
+            body,
           });
-
           res.writeHead(statusCodes[respIndex], {
             'Content-Type': 'text/plain',
           });
-          res.end(resp);
+          res.end(resp, () => req.socket.unref());
         });
       } else {
         f({
           req,
-          body: '',
+          body,
         });
-
         res.writeHead(statusCodes[respIndex], { 'Content-Type': 'text/plain' });
         respIndex++;
-        res.end(resp);
+        res.end(resp, () => req.socket.unref());
       }
     });
 
