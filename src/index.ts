@@ -37,7 +37,7 @@ export interface S3ClientOpts {
   secretAccessKey: string;
   sessionToken?: string; // optional
   apiURL?: string; // defaults to 'https://s3.amazonaws.com'
-  retries?: number; // max of 5, min of 0 to disable
+  retries?: number; // max of 5, min of 0 to disable, defaults to 3
 }
 
 export class S3Client {
@@ -45,7 +45,9 @@ export class S3Client {
   private secretAccessKey: string;
   private sessionToken: string | undefined;
   private apiURL: string;
+  private protocol: string;
   private retries = 3;
+  private isLocal = false;
   private retryableStatusCodes = new Set([
     400, 403, 408, 429, 500, 502, 503, 504, 509,
   ]);
@@ -65,11 +67,14 @@ export class S3Client {
     }
 
     if (opts?.apiURL?.trim()) {
-      this.apiURL = new URL(opts?.apiURL?.trim())?.hostname;
+      this.apiURL = new URL(opts?.apiURL?.trim())?.host;
+      this.protocol = new URL(opts?.apiURL?.trim())?.protocol;
       if (!this.apiURL) {
         errors.push('invalid apiURL');
       }
+      this.isLocal = this.apiURL.includes('localhost');
     } else {
+      this.protocol = 'https:';
       this.apiURL = 's3.amazonaws.com';
     }
 
@@ -81,6 +86,8 @@ export class S3Client {
       this.retries = 0;
     } else if (opts?.retries && opts.retries > 5) {
       this.retries = 5;
+    } else {
+      this.retries = opts?.retries || 3;
     }
 
     this.accessKeyId = cleanedAccessKeyId;
@@ -161,9 +168,16 @@ ${headersToSign.join('\n')}
       signedHeaders['Content-Type'] = req.file.contentType;
     }
 
+    let reqURL = '';
+    if (this.isLocal) {
+      reqURL = `${this.protocol}//${this.apiURL}/${req.key}`;
+    } else {
+      reqURL = `${this.protocol}//${req.bucket}.${this.apiURL}/${req.key}`;
+    }
+
     return {
       signedHeaders,
-      reqURL: `https://${req.bucket}.${this.apiURL}/${req.key}`,
+      reqURL: reqURL,
       cleanedKey: req.key,
       cleanedBucket: req.bucket,
     };
@@ -194,7 +208,7 @@ ${headersToSign.join('\n')}
     return this.do(bucket, key, 'DELETE', 204, null, 0, headers || {});
   }
 
-  private async do(
+  public async do(
     bucket: string,
     key: string,
     method: 'GET' | 'PUT' | 'DELETE',
@@ -236,7 +250,7 @@ ${headersToSign.join('\n')}
 
     if (
       !resp ||
-      (this.retryableStatusCodes.has(resp.status) && attempt < this.retries)
+      (this.retryableStatusCodes.has(resp.status) && attempt < this.retries - 1)
     ) {
       const newAttempt = attempt + 1;
       return this.do(
