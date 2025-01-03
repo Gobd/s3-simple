@@ -1,6 +1,6 @@
 {
   "name": "s3-simple",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -17,7 +17,8 @@
     "test": "bun test",
     "lint": "npx @biomejs/biome check",
     "lint-fix": "npx @biomejs/biome check --write",
-    "ts-check": "npx tsc --noEmit -p .",
+    "postinstall": "node ./txmlType.js",
+    "ts-check": "node ./txmlType.js && npx tsc --noEmit -p .",
     "build": "npx tsc -p tsconfig.json"
   },
   "author": "Brian Kemper",

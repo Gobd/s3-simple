@@ -1,6 +1,6 @@
 import { createHash, createHmac } from 'node:crypto';
 import { normalize as normalizePath } from 'node:path';
-import { parse as xmlParse, simplify as xmlSimplify } from 'txml';
+import { parse as xmlParse, simplify as xmlSimplify } from 'txml/txml';
 
 // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTAuthentication.html
 // https://github.com/paulhammond/s3simple/blob/main/s3simple
@@ -15,9 +15,8 @@ interface SignRequest {
   method: Method;
   bucket: string;
   key: string;
-  extraHeaders?: Record<string, string>;
-  // If PUT request
-  file?: S3File;
+  extraHeaders: Record<string, string>;
+  file: S3File | null;
 }
 
 interface SignResponse {
@@ -50,9 +49,9 @@ export interface S3ClientOpts {
 export class S3Client {
   private accessKeyId: string;
   private secretAccessKey: string;
-  private sessionToken: string;
+  private sessionToken: string | undefined;
   private apiURL: string;
-  private retries: number;
+  private retries = 3;
   private retryableStatusCodes = new Set([
     400, 403, 408, 429, 500, 502, 503, 504, 509,
   ]);
@@ -84,9 +83,9 @@ export class S3Client {
       throw new Error(errors.join(', '));
     }
 
-    if (!opts?.retries || opts?.retries < 0) {
+    if (opts?.retries && opts.retries < 0) {
       this.retries = 0;
-    } else if (opts?.retries > 5) {
+    } else if (opts?.retries && opts.retries > 5) {
       this.retries = 5;
     }
 
@@ -120,7 +119,7 @@ export class S3Client {
     }
 
     const date = `${new Date().toISOString().replaceAll('-', '').replaceAll(':', '').slice(0, 15)}Z`;
-    const headersObj = {};
+    const headersObj: Record<string, string> = {};
 
     if (this?.sessionToken) {
       headersObj['x-amz-security-token'] = this.sessionToken;
@@ -147,7 +146,7 @@ ${headersToSign.join('\n')}
     const hmac = createHmac('sha1', this.secretAccessKey);
     hmac.write(stringToSign);
     hmac.end();
-    const signedHeaders = {
+    const signedHeaders: Record<string, string> = {
       Authorization: `AWS ${this.accessKeyId}:${hmac.read().toString('base64')}`,
       date,
     };
@@ -176,8 +175,8 @@ ${headersToSign.join('\n')}
     bucket: string,
     key: string,
     headers?: Record<string, string>,
-  ): Promise<S3Response> {
-    return this.do(bucket, key, Method.Get, 200, null, 0, headers);
+  ): Promise<S3Response | string> {
+    return this.do(bucket, key, Method.Get, 200, null, 0, headers || {});
   }
 
   public async put(
@@ -185,16 +184,16 @@ ${headersToSign.join('\n')}
     key: string,
     file: S3File,
     headers?: Record<string, string>,
-  ): Promise<S3Response> {
-    return this.do(bucket, key, Method.Put, 200, file, 0, headers);
+  ): Promise<S3Response | string> {
+    return this.do(bucket, key, Method.Put, 200, file, 0, headers || {});
   }
 
   public async delete(
     bucket: string,
     key: string,
     headers?: Record<string, string>,
-  ): Promise<S3Response> {
-    return this.do(bucket, key, Method.Delete, 204, null, 0, headers);
+  ): Promise<S3Response | string> {
+    return this.do(bucket, key, Method.Delete, 204, null, 0, headers || {});
   }
 
   private async do(
@@ -202,17 +201,26 @@ ${headersToSign.join('\n')}
     key: string,
     method: Method,
     desiredStatus: number,
-    file: S3File,
+    file: S3File | null,
     attempt: number,
-    headers?: Record<string, string>,
-  ): Promise<S3Response> {
-    const { signedHeaders, reqURL, cleanedBucket, cleanedKey } = this.sign({
-      method: method,
-      bucket,
-      key,
-      file,
-      extraHeaders: headers,
-    });
+    headers: Record<string, string>,
+  ): Promise<S3Response | string> {
+    let signedHeaders: Record<string, string>;
+    let reqURL: string;
+    let cleanedBucket: string;
+    let cleanedKey: string;
+
+    try {
+      ({ signedHeaders, reqURL, cleanedBucket, cleanedKey } = this.sign({
+        method: method,
+        bucket,
+        key,
+        file,
+        extraHeaders: headers,
+      }));
+    } catch (e) {
+      return Promise.reject(e);
+    }
 
     const opts: RequestInit = {
       method: method,
@@ -244,19 +252,33 @@ ${headersToSign.join('\n')}
       );
     }
 
-    const respText = await resp.text();
-    const respObj = xmlSimplify(xmlParse(respText));
-    // biome-ignore lint/performance/noDelete: need to remove before JSON.stringify
-    delete respObj['?xml'];
     const r: S3Response = {
       Bucket: cleanedBucket,
       Key: cleanedKey,
       Status: resp.status,
-      Resp: respObj,
+      Resp: {},
     };
 
+    const respText = await resp.text();
+
     if (resp?.status !== desiredStatus) {
-      throw new Error(JSON.stringify(r));
+      const xml = xmlParse(respText, {
+        keepComments: false,
+        keepWhitespace: false,
+      });
+
+      const filteredXml = xml.filter((node) => typeof node !== 'string');
+
+      const respObj: Record<string, string> = xmlSimplify(filteredXml);
+      r.Resp = respObj;
+
+      // biome-ignore lint/performance/noDelete: need to remove before JSON.stringify
+      delete respObj['?xml'];
+      return Promise.reject(r);
+    }
+
+    if (method === Method.Get) {
+      return Promise.resolve(respText);
     }
 
     return Promise.resolve(r);

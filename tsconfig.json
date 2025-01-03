@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
+    "removeComments": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "listFiles": false,
     "declaration": true,
+    "strict": true,
+    "inlineSourceMap": false,
     "moduleDetection": "force",
     "outDir": "dist",
     "rootDir": ".",
