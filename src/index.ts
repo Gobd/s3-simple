@@ -86,6 +86,8 @@ export class S3Client {
       this.retries = 0;
     } else if (opts?.retries && opts.retries > 5) {
       this.retries = 5;
+    } else {
+      this.retries = opts?.retries || 3;
     }
 
     this.accessKeyId = cleanedAccessKeyId;
@@ -206,7 +208,7 @@ ${headersToSign.join('\n')}
     return this.do(bucket, key, 'DELETE', 204, null, 0, headers || {});
   }
 
-  private async do(
+  public async do(
     bucket: string,
     key: string,
     method: 'GET' | 'PUT' | 'DELETE',
@@ -248,7 +250,7 @@ ${headersToSign.join('\n')}
 
     if (
       !resp ||
-      (this.retryableStatusCodes.has(resp.status) && attempt < this.retries)
+      (this.retryableStatusCodes.has(resp.status) && attempt < this.retries - 1)
     ) {
       const newAttempt = attempt + 1;
       return this.do(

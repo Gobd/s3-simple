@@ -16,6 +16,7 @@ suite('s3-simple integration', () => {
   test('should work with S3', async (t) => {
     if (!process.env.INTEGRATION) {
       t.skip('Integration tests are disabled');
+      return;
     }
 
     const deleteResp = await s3.delete(
