@@ -1,6 +1,6 @@
 {
   "name": "s3-simple",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",

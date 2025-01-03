@@ -6,7 +6,7 @@
     "listFiles": false,
     "declaration": true,
     "strict": true,
-    "inlineSourceMap": true,
+    "inlineSourceMap": false,
     "moduleDetection": "force",
     "outDir": "dist",
     "rootDir": ".",
