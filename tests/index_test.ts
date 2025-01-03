@@ -19,13 +19,20 @@ const s3 = new S3Client({
   secretAccessKey: 'asdSecret',
 });
 
+const s3sess = new S3Client({
+  accessKeyId: 'asdID',
+  secretAccessKey: 'asdSecret',
+  sessionToken: 'asdToken',
+});
+
 s3.date = () => new Date('2021-01-01T00:00:00Z');
+s3sess.date = () => new Date('2021-01-01T00:00:00Z');
 
 suite('s3-simple GET', () => {
   test('should sign a request', async (t) => {
     const r = s3.sign({
       method: 'GET',
-      bucket: 'asdBucket',
+      bucket: ' ./asdBucket/ ',
       key: 'asdKey',
       extraHeaders: {},
       file: null,
@@ -34,6 +41,18 @@ suite('s3-simple GET', () => {
   });
   test('should sign a request with extra headers', async (t) => {
     const r = s3.sign({
+      method: 'GET',
+      bucket: 'asdBucket',
+      key: 'asdKey',
+      extraHeaders: {
+        'x-amz-acl': 'public-read',
+      },
+      file: null,
+    });
+    t.assert.snapshot(r);
+  });
+  test('should sign with session token', async (t) => {
+    const r = s3sess.sign({
       method: 'GET',
       bucket: 'asdBucket',
       key: 'asdKey',

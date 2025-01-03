@@ -46,6 +46,19 @@ exports[`s3-simple GET > should sign a request with extra headers 1`] = `
 }
 `;
 
+exports[`s3-simple GET > should sign with session token 1`] = `
+{
+  "signedHeaders": {
+    "Authorization": "AWS asdID:bqUJxTOEVDA6O7w0dBbR1sDzUYw=",
+    "date": "20210101T000000Z",
+    "x-amz-security-token": "asdToken"
+  },
+  "reqURL": "https://asdBucket.s3.amazonaws.com/asdKey",
+  "cleanedKey": "asdKey",
+  "cleanedBucket": "asdBucket"
+}
+`;
+
 exports[`s3-simple PUT > should sign a request 1`] = `
 {
   "signedHeaders": {
