@@ -37,7 +37,7 @@ export interface S3ClientOpts {
   secretAccessKey: string;
   sessionToken?: string; // optional
   apiURL?: string; // defaults to 'https://s3.amazonaws.com'
-  retries?: number; // max of 5, min of 0 to disable
+  retries?: number; // max of 5, min of 0 to disable, defaults to 3
 }
 
 export class S3Client {

@@ -14,6 +14,7 @@
   },
   "types": "dist/index.d.ts",
   "scripts": {
+    "integration": "INTEGRATION=true npm run test",
     "coverage": "node --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts",
     "test": "node --experimental-strip-types --test ./tests/**/*_test.ts",
     "updatesnaps": "node --experimental-strip-types --test-update-snapshots --test ./tests/**/*_test.ts",

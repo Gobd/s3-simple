@@ -7,7 +7,11 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 const { accessKeyId, secretAccessKey, sessionToken } =
   await fromNodeProviderChain()();
 
-const s3 = new S3Client(accessKeyId, secretAccessKey, sessionToken);
+const s3 = new S3Client({
+  accessKeyId,
+  secretAccessKey,
+  sessionToken,
+});
 console.log(
   await s3.put('bucket', '/asd/asd/zzzz asd zzz.js', {
     content: 'pasosadisod',
