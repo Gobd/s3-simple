@@ -76,7 +76,7 @@ export class S3Client {
         this.isLocal = true;
       }
     } else {
-      this.protocol = 'https';
+      this.protocol = 'https:';
       this.apiURL = 's3.amazonaws.com';
     }
 
