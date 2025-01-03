@@ -11,7 +11,7 @@
     "inlineSourceMap": false,
     "moduleDetection": "force",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "sourceMap": false,
     "target": "ESNext",
     "lib": ["ESNext"],
@@ -19,5 +19,5 @@
     "baseUrl": "./",
     "skipLibCheck": true
   },
-  "exclude": [".vscode", "node_modules", "dist", "test.js"]
+  "exclude": [".vscode", "node_modules", "dist", "tests"]
 }

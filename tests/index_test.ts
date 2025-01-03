@@ -1,6 +1,6 @@
 import { basename, dirname, extname, join } from 'node:path';
 import { snapshot, suite, test } from 'node:test';
-import { S3Client } from '../index.ts';
+import { S3Client } from '../src/index.ts';
 
 snapshot.setResolveSnapshotPath(generateSnapshotPath);
 
