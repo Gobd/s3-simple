@@ -1,6 +1,6 @@
 {
   "name": "s3-simple",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -24,9 +24,9 @@
   "author": "Brian Kemper",
   "license": "ISC",
   "devDependencies": {
-    "@aws-sdk/credential-providers": "~3.716.0",
+    "@aws-sdk/credential-providers": "~3.721.0",
     "@biomejs/biome": "1.9.4",
-    "@types/node": "~22.10.3",
+    "@types/node": "~22.10.5",
     "typescript": "~5.7.2"
   },
   "dependencies": {
