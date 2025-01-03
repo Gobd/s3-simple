@@ -1,13 +1,13 @@
 {
   "name": "s3-simple",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gobd/s3-simple.git"
+    "url": "https://github.com/Gobd/s3-simple"
   },
   "bugs": {
     "url": "https://github.com/gobd/s3-simple/issues"
