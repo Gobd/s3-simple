@@ -21,7 +21,10 @@
   "nodejs-testing.extensions": [
     {
       "extensions": ["ts"],
-      "parameters": ["--experimental-strip-types"]
+      "parameters": [
+        "--experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info"
+      ]
     }
-  ]
+  ],
+  "markiscodecoverage.searchCriteria": "lcov.info"
 }
