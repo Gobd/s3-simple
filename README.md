@@ -12,6 +12,9 @@ console.log(
   await s3.put('bucket', '/asd/asd/zzzz asd zzz.js', {
     content: 'pasosadisod',
     contentType: 'jpeg',
+  },
+  {
+    'x-amz-acl': 'public-read',
   }),
 );
 console.log(await s3.get('bucket', '/asd/asd/zzzz asd zzz.js'));
