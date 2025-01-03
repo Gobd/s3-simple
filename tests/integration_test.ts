@@ -40,6 +40,15 @@ suite('s3-simple integration', () => {
     );
     t.assert.equal((putResp as S3Response).Status, 200, 'put file');
 
+    const headResp = await s3.head('la-profefe', '/asd/asd/zzzz asd zzz.js');
+    t.assert.equal((headResp as S3Response).Status, 200, 'head existing file');
+
+    try {
+      await s3.head('la-profefe', '/asd/asd/zzzza asd zzz.js');
+    } catch (e) {
+      t.assert.equal((e as S3Response).Status, 404, 'head missing file');
+    }
+
     const getResp = await s3.get('la-profefe', '/asd/asd/zzzz asd zzz.js');
     t.assert.equal(getResp, content, 'get file');
 

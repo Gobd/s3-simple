@@ -1,6 +1,6 @@
 {
   "name": "s3-simple",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -34,5 +34,15 @@
   },
   "dependencies": {
     "txml": "~5.1.1"
-  }
+  },
+  "keywords": [
+    "s3",
+    "aws",
+    "amazon",
+    "lightweight",
+    "minimal",
+    "blob",
+    "storage",
+    "cloud"
+  ]
 }

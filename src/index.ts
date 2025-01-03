@@ -6,7 +6,7 @@ import { parse as xmlParse, simplify as xmlSimplify } from 'txml/txml';
 // https://github.com/paulhammond/s3simple/blob/main/s3simple
 
 interface SignRequest {
-  method: 'GET' | 'PUT' | 'DELETE';
+  method: 'GET' | 'PUT' | 'DELETE' | 'HEAD';
   bucket: string;
   key: string;
   extraHeaders: Record<string, string>;
@@ -200,6 +200,14 @@ ${headersToSign.join('\n')}
     return this.do(bucket, key, 'PUT', 200, file, 0, headers || {});
   }
 
+  public async head(
+    bucket: string,
+    key: string,
+    headers?: Record<string, string>,
+  ): Promise<S3Response | string> {
+    return this.do(bucket, key, 'HEAD', 200, null, 0, headers || {});
+  }
+
   public async delete(
     bucket: string,
     key: string,
@@ -211,7 +219,7 @@ ${headersToSign.join('\n')}
   public async do(
     bucket: string,
     key: string,
-    method: 'GET' | 'PUT' | 'DELETE',
+    method: 'GET' | 'PUT' | 'DELETE' | 'HEAD',
     desiredStatus: number,
     file: S3File | null,
     attempt: number,
