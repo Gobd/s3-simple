@@ -72,9 +72,7 @@ export class S3Client {
       if (!this.apiURL) {
         errors.push('invalid apiURL');
       }
-      if (this.apiURL.includes('localhost')) {
-        this.isLocal = true;
-      }
+      this.isLocal = this.apiURL.includes('localhost');
     } else {
       this.protocol = 'https:';
       this.apiURL = 's3.amazonaws.com';
