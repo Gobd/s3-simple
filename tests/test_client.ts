@@ -2,14 +2,12 @@ import { readFileSync } from 'node:fs';
 import { importFromStringSync } from 'module-from-string';
 import type { S3ClientOpts } from '../src';
 
+const publicFile = readFileSync('./src/index.ts')
+  .toString()
+  .replace(/private /, 'public ');
+
 export const S3Client = (a: S3ClientOpts): typeof s.S3Client => {
-  let f = readFileSync('./src/index.ts').toString();
-  const reps = ['cleanPath', 'date', 'sign', 'async do'];
-  for (const rep of reps) {
-    const regex = new RegExp(`private ${rep}\\(`, 'g');
-    f = f.replace(regex, `public ${rep}(`);
-  }
-  const s = importFromStringSync(f, {
+  const s = importFromStringSync(publicFile, {
     useCurrentGlobal: true,
     transformOptions: {
       target: 'es2022',

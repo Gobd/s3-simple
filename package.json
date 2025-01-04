@@ -23,7 +23,7 @@
     "lint-fix": "npx @biomejs/biome check --write",
     "postinstall": "node ./build/txmlType.js",
     "ts-check": "node ./build/txmlType.js && npx tsc -p tsconfig.json",
-    "build": "node --experimental-strip-types ./build/build.ts"
+    "build": "rimraf ./dist && npm run lint && npm run ts-check && npx tsc -p ./build/tsconfig.build.json"
   },
   "author": "Brian Kemper",
   "license": "ISC",
@@ -33,6 +33,7 @@
     "@types/node": "~22.10.5",
     "cross-env": "~7.0.3",
     "module-from-string": "~3.3.1",
+    "rimraf": "~6.0.1",
     "typescript": "~5.7.2"
   },
   "dependencies": {
