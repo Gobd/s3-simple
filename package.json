@@ -1,6 +1,6 @@
 {
   "name": "s3-simple",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -15,7 +15,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "integration": "cross-env INTEGRATION=true npm run test",
-    "generate": "node --experimental-strip-types ./tests/generate.ts",
     "coverage": "node --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts",
     "test": "node --experimental-strip-types --test ./tests/**/*_test.ts",
     "updatesnaps": "node --experimental-strip-types --test-update-snapshots --test ./tests/**/*_test.ts",
