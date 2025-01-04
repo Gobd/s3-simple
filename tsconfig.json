@@ -19,5 +19,5 @@
     "baseUrl": "./",
     "skipLibCheck": true
   },
-  "exclude": [".vscode", "node_modules", "dist", "tests"]
+  "exclude": [".vscode", "node_modules", "dist", "tests", "build"]
 }

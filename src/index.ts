@@ -1,5 +1,6 @@
 import { createHash, createHmac } from 'node:crypto';
 import { normalize as normalizePath } from 'node:path';
+import { URL } from 'node:url';
 import { parse as xmlParse, simplify as xmlSimplify } from 'txml/txml';
 
 // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTAuthentication.html
@@ -82,12 +83,16 @@ export class S3Client {
       throw new Error(errors.join(', '));
     }
 
-    if (opts?.retries && opts.retries < 0) {
-      this.retries = 0;
-    } else if (opts?.retries && opts.retries > 5) {
-      this.retries = 5;
+    if (typeof opts?.retries === 'number') {
+      if (opts.retries <= 0) {
+        this.retries = 0;
+      } else if (opts.retries > 5) {
+        this.retries = 5;
+      } else {
+        this.retries = opts.retries;
+      }
     } else {
-      this.retries = opts?.retries || 3;
+      this.retries = 3;
     }
 
     this.accessKeyId = cleanedAccessKeyId;
@@ -95,7 +100,7 @@ export class S3Client {
     this.sessionToken = cleanedSessionToken;
   }
 
-  public cleanPath(inputPath: string, key: string): string {
+  private cleanPath(inputPath: string, key: string): string {
     const cleanedInputPath = normalizePath(inputPath.trim()).replace(
       /^\/|\/$/g,
       '',
@@ -106,11 +111,11 @@ export class S3Client {
     return cleanedInputPath;
   }
 
-  public date(): Date {
+  private date(): Date {
     return new Date();
   }
 
-  public sign(req: SignRequest): SignResponse {
+  private sign(req: SignRequest): SignResponse {
     req.bucket = this.cleanPath(req.bucket, 'bucket');
     req.key = this.cleanPath(req.key, 'key');
     req.key = encodeURIComponent(req.key);
@@ -216,7 +221,7 @@ ${headersToSign.join('\n')}
     return this.do(bucket, key, 'DELETE', 204, null, 0, headers || {});
   }
 
-  public async do(
+  private async do(
     bucket: string,
     key: string,
     method: 'GET' | 'PUT' | 'DELETE' | 'HEAD',

@@ -3,8 +3,7 @@ import type { IncomingMessage, Server } from 'node:http';
 import { basename, dirname, extname, join } from 'node:path';
 import { snapshot, suite, test } from 'node:test';
 import type { Mock } from 'node:test';
-import { S3Client } from '../src/index.ts';
-import type { S3Response } from '../src/index.ts';
+import { S3Client } from './test_client.ts';
 
 snapshot.setResolveSnapshotPath(generateSnapshotPath);
 
@@ -18,12 +17,12 @@ function generateSnapshotPath(testFilePath: string | undefined): string {
   return join(base, 'snaps', `${filename}.snap.cjs`);
 }
 
-const s3 = new S3Client({
+const s3 = S3Client({
   accessKeyId: 'asdID',
   secretAccessKey: 'asdSecret',
 });
 
-const s3sess = new S3Client({
+const s3sess = S3Client({
   accessKeyId: 'asdID',
   secretAccessKey: 'asdSecret',
   sessionToken: 'asdToken',
@@ -179,7 +178,7 @@ function createServerPromise(
 
 suite('s3-simple GET local integration', () => {
   test('should get a file', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
       apiURL: 'http://localhost:3000',
@@ -199,7 +198,7 @@ suite('s3-simple GET local integration', () => {
 
 suite('s3-simple PUT local integration', () => {
   test('should get a file', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
       apiURL: 'http://localhost:3001',
@@ -246,7 +245,8 @@ suite('s3-simple PUT local integration', () => {
 
 suite('s3-simple retries', () => {
   test('should retry default times', async (t) => {
-    const s3 = new S3Client({
+    global.fetch = fetch;
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
       apiURL: 'http://localhost:3004',
@@ -270,17 +270,17 @@ suite('s3-simple retries', () => {
     }
   });
   test('should retry default times but succeed', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
-      apiURL: 'http://localhost:3004',
+      apiURL: 'http://localhost:3005',
     });
 
     t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
-      3004,
+      3005,
       b,
       [400, 400, 200],
       () => {},
@@ -294,10 +294,10 @@ suite('s3-simple retries', () => {
     }
   });
   test('should retry 2 times', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
-      apiURL: 'http://localhost:3005',
+      apiURL: 'http://localhost:3006',
       retries: 2,
     });
 
@@ -305,7 +305,7 @@ suite('s3-simple retries', () => {
 
     const b = 'Hello World!';
     const server = await createServerPromise(
-      3005,
+      3006,
       b,
       [400, 400, 400, 400],
       () => {},
@@ -319,10 +319,10 @@ suite('s3-simple retries', () => {
     }
   });
   test('should retry 5 times', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
-      apiURL: 'http://localhost:3006',
+      apiURL: 'http://localhost:3007',
       retries: 55,
     });
 
@@ -330,7 +330,7 @@ suite('s3-simple retries', () => {
 
     const b = 'Hello World!';
     const server = await createServerPromise(
-      3006,
+      3007,
       b,
       [400, 400, 400, 400, 400, 400],
       () => {},
@@ -344,10 +344,10 @@ suite('s3-simple retries', () => {
     }
   });
   test('should retry 0 times', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
-      apiURL: 'http://localhost:3006',
+      apiURL: 'http://localhost:3008',
       retries: 0,
     });
 
@@ -355,7 +355,7 @@ suite('s3-simple retries', () => {
 
     const b = 'Hello World!';
     const server = await createServerPromise(
-      3006,
+      3008,
       b,
       [400, 400, 400, 400, 400, 400],
       () => {},
@@ -369,10 +369,10 @@ suite('s3-simple retries', () => {
     }
   });
   test('should retry 0 times negative', async (t) => {
-    const s3 = new S3Client({
+    const s3 = S3Client({
       accessKeyId: 'asdID',
       secretAccessKey: 'asdSecret',
-      apiURL: 'http://localhost:3006',
+      apiURL: 'http://localhost:3009',
       retries: -5,
     });
 
@@ -380,7 +380,7 @@ suite('s3-simple retries', () => {
 
     const b = 'Hello World!';
     const server = await createServerPromise(
-      3006,
+      3009,
       b,
       [400, 400, 400, 400, 400, 400],
       () => {},
