@@ -83,12 +83,16 @@ export class S3Client {
       throw new Error(errors.join(', '));
     }
 
-    if (opts?.retries && opts.retries < 0) {
-      this.retries = 0;
-    } else if (opts?.retries && opts.retries > 5) {
-      this.retries = 5;
+    if (typeof opts?.retries === 'number') {
+      if (opts.retries <= 0) {
+        this.retries = 0;
+      } else if (opts.retries > 5) {
+        this.retries = 5;
+      } else {
+        this.retries = opts.retries;
+      }
     } else {
-      this.retries = opts?.retries || 3;
+      this.retries = 3;
     }
 
     this.accessKeyId = cleanedAccessKeyId;
