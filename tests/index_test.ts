@@ -3,10 +3,7 @@ import type { IncomingMessage, Server } from 'node:http';
 import { basename, dirname, extname, join } from 'node:path';
 import { snapshot, suite, test } from 'node:test';
 import type { Mock } from 'node:test';
-import { cleanup } from './generate_test_client.js';
 import { S3Client } from './generated_test_client.ts';
-
-cleanup();
 
 snapshot.setResolveSnapshotPath(generateSnapshotPath);
 

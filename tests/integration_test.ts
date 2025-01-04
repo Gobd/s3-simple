@@ -1,10 +1,7 @@
 import { suite, test } from 'node:test';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import type { S3Response } from '../src/index.ts';
-import { cleanup } from './generate_test_client.js';
 import { S3Client } from './generated_test_client.ts';
-
-cleanup();
 
 suite('s3-simple integration', () => {
   test('should work with S3', async (t) => {
