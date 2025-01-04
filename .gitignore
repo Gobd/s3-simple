@@ -2,3 +2,4 @@ node_modules
 dist
 test.js
 lcov.info
+tests/generated_test_client.ts

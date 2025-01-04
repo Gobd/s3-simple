@@ -1,23 +1,25 @@
 {
   "name": "s3-simple",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Upload, download, and delete from S3 with minimal dependencies",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Gobd/s3-simple"
+    "url": "git+https://github.com/Gobd/s3-simple.git"
   },
   "bugs": {
     "url": "https://github.com/gobd/s3-simple/issues"
   },
   "types": "dist/index.d.ts",
   "scripts": {
-    "integration": "cross-env INTEGRATION=true npm run test",
-    "coverage": "node --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts",
-    "test": "node --experimental-strip-types --test ./tests/**/*_test.ts",
-    "updatesnaps": "node --experimental-strip-types --test-update-snapshots --test ./tests/**/*_test.ts",
+    "generate": "node ./tests/generate_test_client.js",
+    "integration": "npm run generate && cross-env INTEGRATION=true npm run test",
+    "nodeest": "node --experimental-strip-types",
+    "coverage": "npm run generate && npm run nodeest -- --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts && node ./tests/fix_coverage.js",
+    "test": "npm run generate && npm run nodeest -- --test ./tests/**/*_test.ts",
+    "updatesnaps": "npm run generate && npm run nodeest -- --test-update-snapshots --test ./tests/**/*_test.ts",
     "lint": "npx @biomejs/biome check",
     "lint-fix": "npx @biomejs/biome check --write",
     "postinstall": "node ./build/txmlType.js",
@@ -31,7 +33,6 @@
     "@biomejs/biome": "1.9.4",
     "@types/node": "~22.10.5",
     "cross-env": "~7.0.3",
-    "module-from-string": "~3.3.1",
     "rimraf": "~6.0.1",
     "typescript": "~5.7.2"
   },
