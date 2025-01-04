@@ -1,5 +1,9 @@
 # s3-simple
 
+## Overview
+
+Download, upload, and check for existence in S3 and S3-compatible stores without needing a huge package.
+
 ## Usage
 
 ```typescript
@@ -12,8 +16,8 @@ const s3 = new S3Client({
   secretAccessKey,
   sessionToken,
 });
-console.log(
-  await s3.put('bucket', '/asd/asd/zzzz asd zzz.js', {
+
+await s3.put('bucket', '/asd/asd/zzzz asd zzz.js', {
     content: 'pasosadisod',
     contentType: 'jpeg',
   },
@@ -21,9 +25,11 @@ console.log(
     'x-amz-acl': 'public-read',
   }),
 );
-console.log(await s3.get('bucket', '/asd/asd/zzzz asd zzz.js'));
-console.log(await s3.delete('bucket', '/asd/asd/zzzz asd zzz.js'));
-console.log(await s3.get('bucket', '/asd/asd/zzzz asd zzz.js')); // Will error because it was deleted
+
+await s3.get('bucket', '/asd/asd/zzzz asd zzz.js');
+await s3.head('bucket', '/asd/asd/zzzz asd zzz.js');
+await s3.delete('bucket', '/asd/asd/zzzz asd zzz.js');
+await s3.get('bucket', '/asd/asd/zzzz asd zzz.js'); // Will error because it was deleted
 ```
 
 Pass in credentials however you like. You might be able to get the ENV vars and pass those in or you might need to use fromNodeProviderChain like in this example.
@@ -34,10 +40,12 @@ Wil output to a top-level dist folder.
 
 ```shell
 npm install
-./build/build.sh
+npm run build
 ```
 
 ## Testing
+
+Requires Node 23 for `--experimental-strip-types --experimental-test-coverage` that are used for running tests and generating coverage.
 
 ```shell
 npm install

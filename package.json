@@ -14,7 +14,8 @@
   },
   "types": "dist/index.d.ts",
   "scripts": {
-    "integration": "INTEGRATION=true npm run test",
+    "integration": "cross-env INTEGRATION=true npm run test",
+    "generate": "node --experimental-strip-types ./tests/generate.ts",
     "coverage": "node --experimental-strip-types --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts",
     "test": "node --experimental-strip-types --test ./tests/**/*_test.ts",
     "updatesnaps": "node --experimental-strip-types --test-update-snapshots --test ./tests/**/*_test.ts",
@@ -22,7 +23,7 @@
     "lint-fix": "npx @biomejs/biome check --write",
     "postinstall": "node ./build/txmlType.js",
     "ts-check": "node ./build/txmlType.js && npx tsc -p tsconfig.json",
-    "build": "npx tsc -p ./build/tsconfig.build.json"
+    "build": "node --experimental-strip-types ./build/build.ts"
   },
   "author": "Brian Kemper",
   "license": "ISC",
@@ -30,6 +31,8 @@
     "@aws-sdk/credential-providers": "~3.721.0",
     "@biomejs/biome": "1.9.4",
     "@types/node": "~22.10.5",
+    "cross-env": "~7.0.3",
+    "module-from-string": "~3.3.1",
     "typescript": "~5.7.2"
   },
   "dependencies": {
