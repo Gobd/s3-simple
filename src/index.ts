@@ -58,7 +58,7 @@ export class S3Client {
     const cleanedSecretAccessKey = opts.secretAccessKey?.trim();
     const cleanedSessionToken = opts?.sessionToken?.trim();
 
-    const errors = [];
+    const errors: string[] = [];
     if (cleanedAccessKeyId === '') {
       errors.push('accessKeyId cannot be empty');
     }
