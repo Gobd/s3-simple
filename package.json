@@ -16,7 +16,7 @@
   "scripts": {
     "integration": "cross-env INTEGRATION=true npm run test",
     "nodeest": "node --experimental-strip-types",
-    "coverage": "npm run nodeest -- --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts && node ./tests/fix_coverage.js",
+    "coverage": "npm run nodeest -- --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=lcov.info --test ./tests/**/*_test.ts",
     "test": "npm run nodeest -- --test ./tests/**/*_test.ts",
     "updatesnaps": "npm run nodeest -- --test-update-snapshots --test ./tests/**/*_test.ts",
     "lint": "npx @biomejs/biome check",
