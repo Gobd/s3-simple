@@ -1,4 +1,4 @@
-exports[`s3-simple DELETE > should sign a request 1`] = `
+exports[`s3-lite DELETE > should sign a request 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:oBTx/gWFghH4Y/Wq4+rxc58tTbk=",
@@ -10,7 +10,7 @@ exports[`s3-simple DELETE > should sign a request 1`] = `
 }
 `;
 
-exports[`s3-simple DELETE > should sign a request with extra headers 1`] = `
+exports[`s3-lite DELETE > should sign a request with extra headers 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:hCITid406IipyThf1RtUGzi7Zjc=",
@@ -22,7 +22,7 @@ exports[`s3-simple DELETE > should sign a request with extra headers 1`] = `
 }
 `;
 
-exports[`s3-simple GET > should sign a request 1`] = `
+exports[`s3-lite GET > should sign a request 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:gyyV7uuNc0QwltEgiLriKRlR2+k=",
@@ -34,7 +34,7 @@ exports[`s3-simple GET > should sign a request 1`] = `
 }
 `;
 
-exports[`s3-simple GET > should sign a request with extra headers 1`] = `
+exports[`s3-lite GET > should sign a request with extra headers 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:Z/1jA8NqmXG7R99fuguhS76rhNA=",
@@ -46,7 +46,7 @@ exports[`s3-simple GET > should sign a request with extra headers 1`] = `
 }
 `;
 
-exports[`s3-simple GET > should sign with session token 1`] = `
+exports[`s3-lite GET > should sign with session token 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:bqUJxTOEVDA6O7w0dBbR1sDzUYw=",
@@ -59,7 +59,7 @@ exports[`s3-simple GET > should sign with session token 1`] = `
 }
 `;
 
-exports[`s3-simple PUT > should sign a request 1`] = `
+exports[`s3-lite PUT > should sign a request 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:0vyT1wKpEwV2f8hXiaFMnDC4aSg=",
@@ -72,7 +72,7 @@ exports[`s3-simple PUT > should sign a request 1`] = `
 }
 `;
 
-exports[`s3-simple PUT > should sign a request with extra headers 1`] = `
+exports[`s3-lite PUT > should sign a request with extra headers 1`] = `
 {
   "signedHeaders": {
     "Authorization": "AWS asdID:xPXxFguantuHbYs/RIZaoEzbBuc=",

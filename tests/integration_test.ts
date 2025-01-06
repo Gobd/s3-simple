@@ -3,7 +3,7 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import type { S3Response } from '../src/index.ts';
 import { S3Client } from '../src/index.ts';
 
-suite('s3-simple integration', () => {
+suite('s3-lite integration', () => {
   test('should work with S3', async (t) => {
     if (!process.env.INTEGRATION) {
       t.skip('Integration tests are disabled');

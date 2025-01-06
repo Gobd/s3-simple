@@ -32,7 +32,7 @@ s3.date = () => new Date('2021-01-01T00:00:00Z');
 // @ts-expect-error
 s3sess.date = () => new Date('2021-01-01T00:00:00Z');
 
-suite('s3-simple GET', () => {
+suite('s3-lite GET', () => {
   test('should sign a request', async (t) => {
     // @ts-expect-error
     const r = s3.sign({
@@ -72,7 +72,7 @@ suite('s3-simple GET', () => {
   });
 });
 
-suite('s3-simple DELETE', () => {
+suite('s3-lite DELETE', () => {
   test('should sign a request', async (t) => {
     // @ts-expect-error
     const r = s3.sign({
@@ -99,7 +99,7 @@ suite('s3-simple DELETE', () => {
   });
 });
 
-suite('s3-simple PUT', () => {
+suite('s3-lite PUT', () => {
   test('should sign a request', async (t) => {
     // @ts-expect-error
     const r = s3.sign({
@@ -184,7 +184,7 @@ function createServerPromise(
   });
 }
 
-suite('s3-simple GET local integration', () => {
+suite('s3-lite GET local integration', () => {
   test('should get a file', async (t) => {
     const s3 = new S3Client({
       accessKeyId: 'asdID',
@@ -204,7 +204,7 @@ suite('s3-simple GET local integration', () => {
   });
 });
 
-suite('s3-simple PUT local integration', () => {
+suite('s3-lite PUT local integration', () => {
   test('should get a file', async (t) => {
     const s3 = new S3Client({
       accessKeyId: 'asdID',
@@ -252,7 +252,7 @@ suite('s3-simple PUT local integration', () => {
   });
 });
 
-suite('s3-simple retries', () => {
+suite('s3-lite retries', () => {
   test('should retry default times', async (t) => {
     global.fetch = fetch;
     const s3 = new S3Client({
