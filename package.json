@@ -21,7 +21,6 @@
     "updatesnaps": "npm run nodeest -- --test-update-snapshots --test ./tests/**/*_test.ts",
     "lint": "npx @biomejs/biome check",
     "lint-fix": "npx @biomejs/biome check --write",
-    "postinstall": "node ./build/txmlType.js",
     "ts-check": "node ./build/txmlType.js && npx tsc -p tsconfig.json",
     "build": "rimraf ./dist && npm run lint && npm run ts-check && npx tsc -p ./build/tsconfig.build.json"
   },
