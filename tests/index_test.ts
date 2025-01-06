@@ -2,8 +2,7 @@ import { createServer } from 'node:http';
 import type { IncomingMessage, Server } from 'node:http';
 import { basename, dirname, extname, join } from 'node:path';
 import { snapshot, suite, test } from 'node:test';
-import type { Mock } from 'node:test';
-import { S3Client } from './generated_test_client.ts';
+import { S3Client } from '../src/index.ts';
 
 snapshot.setResolveSnapshotPath(generateSnapshotPath);
 
@@ -28,11 +27,14 @@ const s3sess = new S3Client({
   sessionToken: 'asdToken',
 });
 
+// @ts-expect-error
 s3.date = () => new Date('2021-01-01T00:00:00Z');
+// @ts-expect-error
 s3sess.date = () => new Date('2021-01-01T00:00:00Z');
 
 suite('s3-simple GET', () => {
   test('should sign a request', async (t) => {
+    // @ts-expect-error
     const r = s3.sign({
       method: 'GET',
       bucket: ' ./asdBucket/ ',
@@ -43,6 +45,7 @@ suite('s3-simple GET', () => {
     t.assert.snapshot(r);
   });
   test('should sign a request with extra headers', async (t) => {
+    // @ts-expect-error
     const r = s3.sign({
       method: 'GET',
       bucket: 'asdBucket',
@@ -55,6 +58,7 @@ suite('s3-simple GET', () => {
     t.assert.snapshot(r);
   });
   test('should sign with session token', async (t) => {
+    // @ts-expect-error
     const r = s3sess.sign({
       method: 'GET',
       bucket: 'asdBucket',
@@ -70,6 +74,7 @@ suite('s3-simple GET', () => {
 
 suite('s3-simple DELETE', () => {
   test('should sign a request', async (t) => {
+    // @ts-expect-error
     const r = s3.sign({
       method: 'DELETE',
       bucket: 'asdBucket',
@@ -80,6 +85,7 @@ suite('s3-simple DELETE', () => {
     t.assert.snapshot(r);
   });
   test('should sign a request with extra headers', async (t) => {
+    // @ts-expect-error
     const r = s3.sign({
       method: 'DELETE',
       bucket: 'asdBucket',
@@ -95,6 +101,7 @@ suite('s3-simple DELETE', () => {
 
 suite('s3-simple PUT', () => {
   test('should sign a request', async (t) => {
+    // @ts-expect-error
     const r = s3.sign({
       method: 'PUT',
       bucket: 'asdBucket',
@@ -107,6 +114,7 @@ suite('s3-simple PUT', () => {
     t.assert.snapshot(r);
   });
   test('should sign a request with extra headers', async (t) => {
+    // @ts-expect-error
     const r = s3.sign({
       method: 'PUT',
       bucket: 'asdBucket',
@@ -203,6 +211,7 @@ suite('s3-simple PUT local integration', () => {
       secretAccessKey: 'asdSecret',
       apiURL: 'http://localhost:3001',
     });
+    // @ts-expect-error
     s3.date = () => new Date('2021-01-01T00:00:00Z');
     const b = 'Hello World!';
     const k = 'asdKey';
@@ -252,7 +261,8 @@ suite('s3-simple retries', () => {
       apiURL: 'http://localhost:3004',
     });
 
-    t.mock.method(s3, 'do');
+    // @ts-expect-error
+    const doMock = t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
@@ -265,7 +275,7 @@ suite('s3-simple retries', () => {
       const r = await s3.get('asdBucket', 'asdKey');
       server.close();
     } catch (e) {
-      t.assert.equal((s3.do as Mock<typeof s3.do>).mock.callCount(), 3);
+      t.assert.equal(doMock.mock.callCount(), 3);
       server.close();
     }
   });
@@ -276,7 +286,8 @@ suite('s3-simple retries', () => {
       apiURL: 'http://localhost:3005',
     });
 
-    t.mock.method(s3, 'do');
+    // @ts-expect-error
+    const doMock = t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
@@ -287,7 +298,7 @@ suite('s3-simple retries', () => {
     );
     try {
       const r = await s3.get('asdBucket', 'asdKey');
-      t.assert.equal((s3.do as Mock<typeof s3.do>).mock.callCount(), 2);
+      t.assert.equal(doMock.mock.callCount(), 2);
       server.close();
     } catch (e) {
       server.close();
@@ -301,7 +312,8 @@ suite('s3-simple retries', () => {
       retries: 2,
     });
 
-    t.mock.method(s3, 'do');
+    // @ts-expect-error
+    const doMock = t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
@@ -314,7 +326,7 @@ suite('s3-simple retries', () => {
       const r = await s3.get('asdBucket', 'asdKey');
       server.close();
     } catch (e) {
-      t.assert.equal((s3.do as Mock<typeof s3.do>).mock.callCount(), 2);
+      t.assert.equal(doMock.mock.callCount(), 2);
       server.close();
     }
   });
@@ -326,7 +338,8 @@ suite('s3-simple retries', () => {
       retries: 55,
     });
 
-    t.mock.method(s3, 'do');
+    // @ts-expect-error
+    const doMock = t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
@@ -339,7 +352,7 @@ suite('s3-simple retries', () => {
       const r = await s3.get('asdBucket', 'asdKey');
       server.close();
     } catch (e) {
-      t.assert.equal((s3.do as Mock<typeof s3.do>).mock.callCount(), 5);
+      t.assert.equal(doMock.mock.callCount(), 5);
       server.close();
     }
   });
@@ -351,7 +364,8 @@ suite('s3-simple retries', () => {
       retries: 0,
     });
 
-    t.mock.method(s3, 'do');
+    // @ts-expect-error
+    const doMock = t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
@@ -364,7 +378,7 @@ suite('s3-simple retries', () => {
       const r = await s3.get('asdBucket', 'asdKey');
       server.close();
     } catch (e) {
-      t.assert.equal((s3.do as Mock<typeof s3.do>).mock.callCount(), 1);
+      t.assert.equal(doMock.mock.callCount(), 1);
       server.close();
     }
   });
@@ -376,7 +390,8 @@ suite('s3-simple retries', () => {
       retries: -5,
     });
 
-    t.mock.method(s3, 'do');
+    // @ts-expect-error
+    const doMock = t.mock.method(s3, 'do');
 
     const b = 'Hello World!';
     const server = await createServerPromise(
@@ -389,7 +404,7 @@ suite('s3-simple retries', () => {
       const r = await s3.get('asdBucket', 'asdKey');
       server.close();
     } catch (e) {
-      t.assert.equal((s3.do as Mock<typeof s3.do>).mock.callCount(), 1);
+      t.assert.equal(doMock.mock.callCount(), 1);
       server.close();
     }
   });
