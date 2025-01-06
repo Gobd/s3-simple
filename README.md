@@ -1,4 +1,4 @@
-# s3-simple
+# s3-lite
 
 ## Overview
 
